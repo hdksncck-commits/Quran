@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تطبيق القرآن والأحاديث</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary-color: #2c5c3e;
+            --secondary-color: #d9a74a;
+            --light-color: #f8f5f0;
+            --dark-color: #1a2f23;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        body {
+            background-color: var(--light-color);
+            color: #333;
+            max-width: 500px;
+            margin: 0 auto;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 80px;
+            position: relative;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--dark-color));
+            color: white;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+            border-radius: 0 0 15px 15px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header h1 {
+            font-size: 1.6rem;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 2;
+        }
+        
+        header p {
+            opacity: 0.9;
+            font-size: 0.9rem;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .header-pattern {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.5;
+        }
+        
+        .container {
+            flex: 1;
+            padding: 1.5rem 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .content-card {
+            background-color: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            border-right: 5px solid var(--secondary-color);
+            transition: transform 0.3s ease;
+        }
+        
+        .content-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .content-type {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .content-type i {
+            font-size: 1.2rem;
+        }
+        
+        .content-number {
+            background-color: var(--secondary-color);
+            color: var(--dark-color);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+        
+        .content-text {
+            font-size: 1.5rem;
+            line-height: 1.8;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #222;
+            font-weight: 500;
+        }
+        
+        .content-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 1rem;
+            padding-top: 0.75rem;
+            border-top: 1px dashed #eee;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--dark-color);
+        }
+        
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            color: var(--dark-color);
+        }
+        
+        .btn-secondary:hover {
+            background-color: #c0953a;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+        
+        .loading i {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        
+        .error {
+            text-align: center;
+            padding: 2rem;
+            color: #d32f2f;
+            font-size: 1.1rem;
+            background-color: #ffebee;
+            border-radius: 10px;
+            border: 1px solid #ffcdd2;
+        }
+        
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            max-width: 500px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 1rem;
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        
+        .nav-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            padding: 0.5rem;
+            border-radius: 10px;
+        }
+        
+        .nav-btn.active {
+            color: var(--primary-color);
+            background-color: rgba(44, 92, 62, 0.1);
+        }
+        
+        .nav-btn i {
+            font-size: 1.2rem;
+        }
+        
+        .settings-panel {
+            background-color: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            box-shadow: var(--shadow);
+            display: none;
+        }
+        
+        .settings-panel.active {
+            display: block;
+        }
+        
+        .settings-header {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .setting-item {
+            margin-bottom: 1.5rem;
+        }
+        
+        .setting-item label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .select-box {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            font-size: 1rem;
+            background-color: #f9f9f9;
+        }
+        
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .checkbox-container input {
+            width: 18px;
+            height: 18px;
+        }
+        
+        @media (max-width: 480px) {
+            .content-text {
+                font-size: 1.3rem;
+            }
+            
+            .btn {
+                padding: 0.65rem 1.2rem;
+                font-size: 0.9rem;
+            }
+            
+            header h1 {
+                font-size: 1.4rem;
+            }
+        }
+        
+        @media (max-width: 350px) {
+            .content-text {
+                font-size: 1.1rem;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.8s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-pattern"></div>
+        <h1><i class="fas fa-book-quran"></i> تطبيق القرآن والأحاديث</h1>
+        <p>تصفح آيات قرآنية وأحاديث نبوية بشكل متتالي</p>
+    </header>
+    
+    <div class="container">
+        <div id="content-container">
+            <!-- سيتم تحميل المحتوى هنا ديناميكيًا -->
+            <div class="loading">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>جاري تحميل المحتوى...</p>
+            </div>
+        </div>
+        
+        <div id="settings-panel" class="settings-panel">
+            <div class="settings-header">
+                <i class="fas fa-cog"></i> الإعدادات
+            </div>
+            
+            <div class="setting-item">
+                <label for="content-type"><i class="fas fa-filter"></i> نوع المحتوى:</label>
+                <select id="content-type" class="select-box">
+                    <option value="both">القرآن والأحاديث بالتناوب</option>
+                    <option value="quran">القرآن فقط</option>
+                    <option value="hadith">الأحاديث فقط</option>
+                </select>
+            </div>
+            
+            <div class="setting-item">
+                <label for="display-mode"><i class="fas fa-eye"></i> طريقة العرض:</label>
+                <select id="display-mode" class="select-box">
+                    <option value="sequential">تتابعي (عنصر واحد في كل مرة)</option>
+                    <option value="multiple">متعدد (عدة عناصر معًا)</option>
+                </select>
+            </div>
+            
+            <div class="setting-item">
+                <div class="checkbox-container">
+                    <input type="checkbox" id="auto-play" checked>
+                    <label for="auto-play">التقديم التلقائي</label>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button id="save-settings" class="btn btn-primary">
+                    <i class="fas fa-save"></i> حفظ الإعدادات
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <button id="nav-quran" class="nav-btn active">
+            <i class="fas fa-quran"></i>
+            <span>القرآن</span>
+        </button>
+        <button id="nav-hadith" class="nav-btn">
+            <i class="fas fa-book-open"></i>
+            <span>الأحاديث</span>
+        </button>
+        <button id="nav-both" class="nav-btn">
+            <i class="fas fa-random"></i>
+            <span>الكل</span>
+        </button>
+        <button id="nav-settings" class="nav-btn">
+            <i class="fas fa-cog"></i>
+            <span>الإعدادات</span>
+        </button>
+    </div>
+    
+    <script>
+        // بيانات التطبيق
+        const app = {
+            currentType: 'both', // 'quran', 'hadith', 'both'
+            currentIndex: 0,
+            autoPlay: true,
+            displayMode: 'sequential',
+            quranVerses: [],
+            hadiths: [],
+            isDataLoaded: false,
+            autoPlayInterval: null,
+            contentTypes: ['quran', 'hadith']
+        };
+        
+        // عناصر DOM
+        const contentContainer = document.getElementById('content-container');
+        const settingsPanel = document.getElementById('settings-panel');
+        const navQuran = document.getElementById('nav-quran');
+        const navHadith = document.getElementById('nav-hadith');
+        const navBoth = document.getElementById('nav-both');
+        const navSettings = document.getElementById('nav-settings');
+        const contentTypeSelect = document.getElementById('content-type');
+        const displayModeSelect = document.getElementById('display-mode');
+        const autoPlayCheckbox = document.getElementById('auto-play');
+        const saveSettingsBtn = document.getElementById('save-settings');
+        
+        // تهيئة التطبيق
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSettings();
+            loadInitialData();
+            setupEventListeners();
+        });
+        
+        // تحميل الإعدادات المحفوظة
+        function loadSettings() {
+            const savedType = localStorage.getItem('contentType');
+            const savedMode = localStorage.getItem('displayMode');
+            const savedAutoPlay = localStorage.getItem('autoPlay');
+            
+            if (savedType) app.currentType = savedType;
+            if (savedMode) app.displayMode = savedMode;
+            if (savedAutoPlay !== null) app.autoPlay = savedAutoPlay === 'true';
+            
+            // تحديث واجهة المستخدم للإعدادات
+            contentTypeSelect.value = app.currentType;
+            displayModeSelect.value = app.displayMode;
+            autoPlayCheckbox.checked = app.autoPlay;
+            
+            // تحديث أزرار التنقل
+            updateNavButtons();
+        }
+        
+        // إعداد مستمعي الأحداث
+        function setupEventListeners() {
+            // أزرار التنقل
+            navQuran.addEventListener('click', () => switchContentType('quran'));
+            navHadith.addEventListener('click', () => switchContentType('hadith'));
+            navBoth.addEventListener('click', () => switchContentType('both'));
+            navSettings.addEventListener('click', () => toggleSettingsPanel());
+            
+            // إعدادات
+            saveSettingsBtn.addEventListener('click', saveSettings);
+            
+            // التقديم التلقائي
+            if (app.autoPlay) {
+                startAutoPlay();
+            }
+        }
+        
+        // تبديل نوع المحتوى
+        function switchContentType(type) {
+            app.currentType = type;
+            app.currentIndex = 0;
+            updateNavButtons();
+            
+            if (type === 'settings') {
+                return;
+            }
+            
+            hideSettingsPanel();
+            displayContent();
+            
+            // حفظ الإعدادات
+            localStorage.setItem('contentType', type);
+        }
+        
+        // تحديث أزرار التنقل
+        function updateNavButtons() {
+            // إزالة الفئة النشطة من جميع الأزرار
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // إضافة الفئة النشطة للزر المحدد
+            if (app.currentType === 'quran') {
+                navQuran.classList.add('active');
+            } else if (app.currentType === 'hadith') {
+                navHadith.classList.add('active');
+            } else if (app.currentType === 'both') {
+                navBoth.classList.add('active');
+            } else if (app.currentType === 'settings') {
+                navSettings.classList.add('active');
+            }
+        }
+        
+        // إظهار/إخفاء لوحة الإعدادات
+        function toggleSettingsPanel() {
+            if (settingsPanel.classList.contains('active')) {
+                hideSettingsPanel();
+            } else {
+                showSettingsPanel();
+            }
+        }
+        
+        function showSettingsPanel() {
+            settingsPanel.classList.add('active');
+            contentContainer.style.display = 'none';
+            app.currentType = 'settings';
+            updateNavButtons();
+        }
+        
+        function hideSettingsPanel() {
+            settingsPanel.classList.remove('active');
+            contentContainer.style.display = 'block';
+            updateNavButtons();
+        }
+        
+        // حفظ الإعدادات
+        function saveSettings() {
+            app.currentType = contentTypeSelect.value;
+            app.displayMode = displayModeSelect.value;
+            app.autoPlay = autoPlayCheckbox.checked;
+            
+            // حفظ في localStorage
+            localStorage.setItem('contentType', app.currentType);
+            localStorage.setItem('displayMode', app.displayMode);
+            localStorage.setItem('autoPlay', app.autoPlay);
+            
+            // إعادة تشغيل التقديم التلقائي إذا تم تفعيله
+            if (app.autoPlay) {
+                startAutoPlay();
+            } else {
+                stopAutoPlay();
+            }
+            
+            // الرجوع للعرض الرئيسي
+            hideSettingsPanel();
+            app.currentIndex = 0;
+            displayContent();
+            
+            // إشعار للمستخدم
+            showNotification('تم حفظ الإعدادات بنجاح');
+        }
+        
+        // تحميل البيانات الأولية
+        async function loadInitialData() {
+            try {
+                // محاكاة جلب بيانات من API (في الواقع الفعلي ستستخدم API حقيقية)
+                // هنا سنستخدم بيانات ثابتة للتوضيح
+                
+                // بيانات قرآنية (آيات)
+                app.quranVerses = [
+                    {
+                        text: "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ",
+                        surah: "الفاتحة",
+                        ayah: 1
+                    },
+                    {
+                        text: "الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ",
+                        surah: "الفاتحة",
+                        ayah: 2
+                    },
+                    {
+                        text: "الرَّحْمَٰنِ الرَّحِيمِ",
+                        surah: "الفاتحة",
+                        ayah: 3
+                    },
+                    {
+                        text: "مَالِكِ يَوْمِ الدِّينِ",
+                        surah: "الفاتحة",
+                        ayah: 4
+                    },
+                    {
+                        text: "إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ",
+                        surah: "الفاتحة",
+                        ayah: 5
+                    },
+                    {
+                        text: "اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ",
+                        surah: "الفاتحة",
+                        ayah: 6
+                    },
+                    {
+                        text: "صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ",
+                        surah: "الفاتحة",
+                        ayah: 7
+                    },
+                    {
+                        text: "الم",
+                        surah: "البقرة",
+                        ayah: 1
+                    },
+                    {
+                        text: "ذَٰلِكَ الْكِتَابُ لَا رَيْبَ ۛ فِيهِ ۛ هُدًى لِلْمُتَّقِينَ",
+                        surah: "البقرة",
+                        ayah: 2
+                    },
+                    {
+                        text: "الَّذِينَ يُؤْمِنُونَ بِالْغَيْبِ وَيُقِيمُونَ الصَّلَاةَ وَمِمَّا رَزَقْنَاهُمْ يُنْفِقُونَ",
+                        surah: "البقرة",
+                        ayah: 3
+                    }
+                ];
+                
+                // بيانات أحاديث
+                app.hadiths = [
+                    {
+                        text: "إنما الأعمال بالنيات، وإنما لكل امرئ ما نوى",
+                        source: "صحيح البخاري ومسلم",
+                        narrator: "عمر بن الخطاب"
+                    },
+                    {
+                        text: "من كان يؤمن بالله واليوم الآخر فليقل خيراً أو ليصمت",
+                        source: "صحيح البخاري ومسلم",
+                        narrator: "أبو هريرة"
+                    },
+                    {
+                        text: "لا يؤمن أحدكم حتى يحب لأخيه ما يحب لنفسه",
+                        source: "صحيح البخاري ومسلم",
+                        narrator: "أنس بن مالك"
+                    },
+                    {
+                        text: "اتق الله حيثما كنت، وأتبع السيئة الحسنة تمحها، وخالق الناس بخلق حسن",
+                        source: "الترمذي",
+                        narrator: "أبو ذر الغفاري"
+                    },
+                    {
+                        text: "الكلمة الطيبة صدقة",
+                        source: "صحيح البخاري ومسلم",
+                        narrator: "أبو هريرة"
+                    },
+                    {
+                        text: "من حسن إسلام المرء تركه ما لا يعنيه",
+                        source: "الترمذي",
+                        narrator: "أبو هريرة"
+                    },
+                    {
+                        text: "الراحمون يرحمهم الرحمن، ارحموا من في الأرض يرحمكم من في السماء",
+                        source: "الترمذي",
+                        narrator: "عبدالله بن عمرو"
+                    },
+                    {
+                        text: "المسلم من سلم المسلمون من لسانه ويده",
+                        source: "صحيح البخاري ومسلم",
+                        narrator: "عبدالله بن عمرو"
+                    },
+                    {
+                        text: "تبسمك في وجه أخيك صدقة",
+                        source: "الترمذي",
+                        narrator: "أبو ذر الغفاري"
+                    },
+                    {
+                        text: "اللهم إني أعوذ بك من علم لا ينفع، ومن قلب لا يخشع، ومن نفس لا تشبع، ومن دعوة لا يستجاب لها",
+                        source: "صحيح مسلم",
+                        narrator: "زيد بن أرقم"
+                    }
+                ];
+                
+                app.isDataLoaded = true;
+                displayContent();
+                
+            } catch (error) {
+                console.error('Error loading data:', error);
+                showError('حدث خطأ في تحميل البيانات. الرجاء المحاولة مرة أخرى.');
+            }
+        }
+        
+        // عرض المحتوى
+        function displayContent() {
+            if (!app.isDataLoaded) {
+                contentContainer.innerHTML = `
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>جاري تحميل المحتوى...</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // إيقاف التقديم التلقائي الحالي
+            stopAutoPlay();
+            
+            // إنشاء المحتوى بناءً على الإعدادات
+            let contentHTML = '';
+            
+            if (app.displayMode === 'sequential') {
+                // عرض عنصر واحد فقط
+                const content = getNextContent();
+                contentHTML = createContentCard(content);
+            } else {
+                // عرض عدة عناصر
+                contentHTML = '<div class="fade-in">';
+                for (let i = 0; i < 3; i++) {
+                    const content = getContentAtIndex(app.currentIndex + i);
+                    if (content) {
+                        contentHTML += createContentCard(content);
+                    }
+                }
+                contentHTML += '</div>';
+                
+                // زيادة الفهرس للمرة القادمة
+                app.currentIndex += 3;
+            }
+            
+            // إضافة عناصر التحكم
+            contentHTML += `
+                <div class="controls fade-in">
+                    <button id="prev-btn" class="btn btn-secondary">
+                        <i class="fas fa-arrow-right"></i> السابق
+                    </button>
+                    <button id="next-btn" class="btn btn-primary">
+                        التالي <i class="fas fa-arrow-left"></i>
+                    </button>
+                </div>
+            `;
+            
+            contentContainer.innerHTML = contentHTML;
+            
+            // إضافة مستمعي الأحداث للأزرار الجديدة
+            document.getElementById('prev-btn').addEventListener('click', showPreviousContent);
+            document.getElementById('next-btn').addEventListener('click', showNextContent);
+            
+            // بدء التقديم التلقائي إذا كان مفعلًا
+            if (app.autoPlay) {
+                startAutoPlay();
+            }
+        }
+        
+        // الحصول على المحتوى التالي
+        function getNextContent() {
+            let content;
+            
+            if (app.currentType === 'quran') {
+                content = app.quranVerses[app.currentIndex % app.quranVerses.length];
+                content.type = 'quran';
+                app.currentIndex = (app.currentIndex + 1) % app.quranVerses.length;
+            } else if (app.currentType === 'hadith') {
+                content = app.hadiths[app.currentIndex % app.hadiths.length];
+                content.type = 'hadith';
+                app.currentIndex = (app.currentIndex + 1) % app.hadiths.length;
+            } else {
+                // تناوب بين القرآن والأحاديث
+                const typeIndex = Math.floor(app.currentIndex / 2) % 2;
+                const contentIndex = app.currentIndex % (typeIndex === 0 ? app.quranVerses.length : app.hadiths.length);
+                
+                if (typeIndex === 0) {
+                    content = app.quranVerses[contentIndex];
+                    content.type = 'quran';
+                } else {
+                    content = app.hadiths[contentIndex];
+                    content.type = 'hadith';
+                }
+                
+                app.currentIndex = (app.currentIndex + 1) % (app.quranVerses.length + app.hadiths.length);
+            }
+            
+            return content;
+        }
+        
+        // الحصول على المحتوى في مؤشر معين
+        function getContentAtIndex(index) {
+            let content;
+            
+            if (app.currentType === 'quran') {
+                if (index >= app.quranVerses.length) return null;
+                content = app.quranVerses[index];
+                content.type = 'quran';
+            } else if (app.currentType === 'hadith') {
+                if (index >= app.hadiths.length) return null;
+                content = app.hadiths[index];
+                content.type = 'hadith';
+            } else {
+                // تناوب بين القرآن والأحاديث
+                const totalItems = app.quranVerses.length + app.hadiths.length;
+                if (index >= totalItems) return null;
+                
+                if (index < app.quranVerses.length) {
+                    content = app.quranVerses[index];
+                    content.type = 'quran';
+                } else {
+                    content = app.hadiths[index - app.quranVerses.length];
+                    content.type = 'hadith';
+                }
+            }
+            
+            return content;
+        }
+        
+        // إنشاء بطاقة المحتوى
+        function createContentCard(content) {
+            const isQuran = content.type === 'quran';
+            const typeName = isQuran ? 'آية قرآنية' : 'حديث نبوي';
+            const icon = isQuran ? 'fas fa-quran' : 'fas fa-book-open';
+            
+            const info = isQuran 
+                ? `سورة ${content.surah} - الآية ${content.ayah}`
+                : `رواه ${content.narrator} - ${content.source}`;
+            
+            return `
+                <div class="content-card fade-in">
+                    <div class="content-header">
+                        <div class="content-type">
+                            <i class="${icon}"></i>
+                            <span>${typeName}</span>
+                        </div>
+                        <div class="content-number">
+                            ${app.currentIndex + 1}
+                        </div>
+                    </div>
+                    <div class="content-text">
+                        "${content.text}"
+                    </div>
+                    <div class="content-info">
+                        <span>${info}</span>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // عرض المحتوى السابق
+        function showPreviousContent() {
+            if (app.displayMode === 'sequential') {
+                app.currentIndex = Math.max(0, app.currentIndex - 2);
+            } else {
+                app.currentIndex = Math.max(0, app.currentIndex - 6);
+            }
+            displayContent();
+        }
+        
+        // عرض المحتوى التالي
+        function showNextContent() {
+            displayContent();
+        }
+        
+        // بدء التقديم التلقائي
+        function startAutoPlay() {
+            stopAutoPlay(); // إيقاف أي فاصل زمني سابق
+            
+            app.autoPlayInterval = setInterval(() => {
+                showNextContent();
+            }, 8000); // تغيير كل 8 ثواني
+        }
+        
+        // إيقاف التقديم التلقائي
+        function stopAutoPlay() {
+            if (app.autoPlayInterval) {
+                clearInterval(app.autoPlayInterval);
+                app.autoPlayInterval = null;
+            }
+        }
+        
+        // عرض رسالة خطأ
+        function showError(message) {
+            contentContainer.innerHTML = `
+                <div class="error">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>${message}</p>
+                    <button onclick="location.reload()" class="btn btn-primary" style="margin-top: 1rem;">
+                        <i class="fas fa-redo"></i> إعادة تحميل
+                    </button>
+                </div>
+            `;
+        }
+        
+        // عرض إشعار
+        function showNotification(message) {
+            // إنشاء عنصر الإشعار
+            const notification = document.createElement('div');
+            notification.innerHTML = `
+                <div style="position: fixed; top: 20px; right: 20px; left: 20px; max-width: 500px; margin: 0 auto; background-color: var(--primary-color); color: white; padding: 1rem; border-radius: 10px; box-shadow: var(--shadow); z-index: 1000; display: flex; justify-content: space-between; align-items: center;">
+                    <span>${message}</span>
+                    <button id="close-notification" style="background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // إضافة مستمع الحدث لإغلاق الإشعار
+            document.getElementById('close-notification').addEventListener('click', () => {
+                notification.remove();
+            });
+            
+            // إزالة الإشعار تلقائيًا بعد 3 ثواني
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 3000);
+        }
+        
+        // دالة لاستخدام API حقيقية (يمكن تفعيلها عند الحاجة)
+        async function fetchFromAPI() {
+            /*
+            // مثال لاستخدام API قرآنية مجانية
+            try {
+                const response = await fetch('https://api.alquran.cloud/v1/ayah/1');
+                const data = await response.json();
+                return data.data;
+            } catch (error) {
+                console.error('Error fetching from API:', error);
+                return null;
+            }
+            
+            // مثال لاستخدام API أحاديث (هناك عدة مصادر مجانية)
+            // قد تحتاج للبحث عن API أحاديث مجانية وتحديث الرابط
+            */
+        }
+    </script>
+</body>
+</html>
