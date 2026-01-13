@@ -3,652 +3,1333 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>برنامج تمارين منزلية</title>
+    <title>تطبيق القرآن الكريم الشامل</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --primary: #0d8af0;
+            --primary-dark: #0a6bc4;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --bg-dark: #0f172a;
+            --bg-light: #f8fafc;
+            --card-bg-dark: #1e293b;
+            --card-bg-light: #ffffff;
+            --text-dark: #f8fafc;
+            --text-light: #1e293b;
+            --text-dim-dark: #94a3b8;
+            --text-dim-light: #64748b;
+            --border-dark: #334155;
+            --border-light: #e2e8f0;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.05);
+            --radius: 16px;
+            --radius-small: 10px;
+            --transition: all 0.3s ease;
+        }
+
+        .light-mode {
+            --bg: var(--bg-light);
+            --card-bg: var(--card-bg-light);
+            --text-main: var(--text-light);
+            --text-dim: var(--text-dim-light);
+            --border: var(--border-light);
+        }
+
+        .dark-mode {
+            --bg: var(--bg-dark);
+            --card-bg: var(--card-bg-dark);
+            --text-main: var(--text-dark);
+            --text-dim: var(--text-dim-dark);
+            --border: var(--border-dark);
+        }
+
         * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        
+
         body {
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-            color: #333;
-            min-height: 100vh;
-            padding: 15px;
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            overflow-x: hidden;
+            transition: var(--transition);
         }
-        
-        .container {
-            max-width: 500px;
-            margin: 0 auto;
-            background-color: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            overflow: hidden;
-        }
-        
-        header {
-            background: linear-gradient(to right, #4A00E0, #8E2DE2);
-            color: white;
-            padding: 20px;
-            text-align: center;
-            position: relative;
-        }
-        
-        header h1 {
-            font-size: 1.8rem;
-            margin-bottom: 5px;
-        }
-        
-        header p {
-            font-size: 0.9rem;
-            opacity: 0.9;
-        }
-        
-        .exercise-view {
-            padding: 20px;
-            text-align: center;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .exercise-figure {
-            width: 200px;
-            height: 200px;
-            margin: 0 auto 20px;
-            position: relative;
-            background: #f5f5f5;
-            border-radius: 15px;
-            overflow: hidden;
+
+        /* شاشة التحميل */
+        #loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-dark);
             display: flex;
-            align-items: center;
+            flex-direction: column;
             justify-content: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s;
         }
-        
-        .figure-part {
-            position: absolute;
-            background-color: #4A00E0;
-            border-radius: 50%;
-        }
-        
-        .head {
-            width: 40px;
-            height: 40px;
-            top: 40px;
-            left: 80px;
-            background-color: #FFD166;
-        }
-        
-        .body {
-            width: 20px;
+
+        .spinner {
+            width: 60px;
             height: 60px;
-            top: 80px;
-            left: 90px;
-            background-color: #4A00E0;
-            border-radius: 5px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
         }
-        
-        .arm-left {
-            width: 50px;
-            height: 10px;
-            top: 85px;
-            left: 70px;
-            transform: rotate(30deg);
-            background-color: #4A00E0;
-            border-radius: 5px;
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
-        
-        .arm-right {
-            width: 50px;
-            height: 10px;
-            top: 85px;
-            left: 90px;
-            transform: rotate(-30deg);
-            background-color: #4A00E0;
-            border-radius: 5px;
+
+        /* الهيدر */
+        header {
+            padding: 20px 15px 10px;
+            background: linear-gradient(to bottom, var(--card-bg), var(--bg));
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid var(--border);
         }
-        
-        .leg-left {
-            width: 10px;
-            height: 50px;
-            top: 140px;
-            left: 85px;
-            background-color: #4A00E0;
-            border-radius: 5px;
-        }
-        
-        .leg-right {
-            width: 10px;
-            height: 50px;
-            top: 140px;
-            left: 105px;
-            background-color: #4A00E0;
-            border-radius: 5px;
-        }
-        
-        .exercise-info {
-            padding: 15px;
-        }
-        
-        .exercise-info h2 {
-            color: #4A00E0;
-            margin-bottom: 10px;
-            font-size: 1.5rem;
-        }
-        
-        .exercise-info p {
-            color: #666;
-            line-height: 1.6;
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 15px;
         }
-        
-        .exercise-stats {
+
+        #pageTitle {
+            font-weight: 700;
+            font-size: 1.6rem;
+            color: var(--primary);
+            margin: 0;
+        }
+
+        .header-icons {
             display: flex;
-            justify-content: space-around;
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 15px;
+            gap: 12px;
         }
-        
-        .stat {
-            text-align: center;
-        }
-        
-        .stat-value {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #4A00E0;
-        }
-        
-        .stat-label {
-            font-size: 0.9rem;
-            color: #666;
-            margin-top: 5px;
-        }
-        
-        .timer {
-            background-color: #4A00E0;
-            color: white;
-            padding: 10px;
-            border-radius: 50px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            display: inline-block;
-            margin-top: 10px;
-            width: 120px;
-        }
-        
-        .controls {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 20px;
-        }
-        
-        .btn {
-            padding: 12px 25px;
+
+        .icon-btn {
+            background: none;
             border: none;
-            border-radius: 50px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            color: var(--text-main);
+            font-size: 1.2rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .icon-btn:hover, .icon-btn:active {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .search-container {
+            position: relative;
+            margin-top: 10px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 14px 20px 14px 45px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            color: var(--text-main);
+            font-family: 'Cairo';
+            outline: none;
+            font-size: 1rem;
+            box-shadow: var(--shadow-light);
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(13, 138, 240, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-dim);
+            font-size: 1.1rem;
+        }
+
+        /* المحتوى الرئيسي */
+        .content-area {
+            padding: 15px;
+            min-height: calc(100vh - 200px);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-weight: 700;
+            margin: 20px 0 15px;
+            color: var(--primary);
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
             gap: 8px;
         }
-        
-        .btn-start {
-            background-color: #4CAF50;
-            color: white;
+
+        .section-title i {
+            color: var(--accent);
         }
-        
-        .btn-pause {
-            background-color: #FF9800;
-            color: white;
+
+        /* البطاقات */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
         }
-        
-        .btn-next {
-            background-color: #2196F3;
-            color: white;
+
+        .item-card {
+            background: var(--card-bg);
+            padding: 18px 12px;
+            border-radius: var(--radius);
+            text-align: center;
+            transition: var(--transition);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-light);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 110px;
         }
-        
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+
+        .item-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            border-color: var(--primary);
         }
-        
-        .btn:active {
-            transform: translateY(0);
+
+        .item-card:active {
+            transform: translateY(-2px);
         }
-        
-        .exercises-list {
-            padding: 20px;
-            background-color: #f8f9fa;
-        }
-        
-        .exercises-list h3 {
-            color: #4A00E0;
-            margin-bottom: 15px;
-            font-size: 1.3rem;
-        }
-        
-        .exercise-item {
-            background-color: white;
-            padding: 15px;
+
+        .item-icon {
+            font-size: 24px;
+            color: var(--primary);
             margin-bottom: 10px;
-            border-radius: 10px;
+        }
+
+        .item-name {
+            font-size: 15px;
+            font-weight: 700;
+            line-height: 1.4;
+            margin-bottom: 5px;
+        }
+
+        .item-sub {
+            font-size: 12px;
+            color: var(--text-dim);
+            line-height: 1.3;
+        }
+
+        /* مشغل الصوت العائم */
+        .audio-player-fixed {
+            position: fixed;
+            bottom: 80px;
+            left: 15px;
+            right: 15px;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 15px;
             display: flex;
             align-items: center;
+            gap: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            z-index: 999;
+            border: 1px solid var(--border);
+            transform: translateY(150%);
+            transition: transform 0.4s ease;
+        }
+
+        .audio-player-fixed.show {
+            transform: translateY(0);
+        }
+
+        .player-info {
+            flex: 1;
+            overflow: hidden;
+        }
+
+        #trackTitle {
+            font-weight: 700;
+            font-size: 14px;
+            margin-bottom: 3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        #trackSub {
+            font-size: 12px;
+            color: var(--text-dim);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .player-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .player-btn {
+            background: var(--primary);
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            font-size: 18px;
+            transition: var(--transition);
         }
-        
-        .exercise-item:hover {
-            transform: translateX(-5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+
+        .player-btn:hover {
+            background: var(--primary-dark);
+            transform: scale(1.05);
         }
-        
-        .exercise-item.active {
-            border-right: 5px solid #4A00E0;
-            background-color: #f0e6ff;
+
+        .close-player {
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            font-size: 18px;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        
-        .exercise-icon {
-            width: 40px;
-            height: 40px;
-            background-color: #e0e0ff;
+
+        audio {
+            display: none;
+        }
+
+        /* شريط التنقل السفلي */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: var(--card-bg);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 0 10px;
+            border-top: 1px solid var(--border);
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-item {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 11px;
+            text-align: center;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: var(--transition);
+            padding: 5px 0;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        .nav-item .nav-icon {
+            font-size: 22px;
+            margin-bottom: 5px;
+            transition: var(--transition);
+        }
+
+        .nav-item.active .nav-icon {
+            transform: translateY(-3px);
+        }
+
+        .nav-item:hover {
+            color: var(--primary);
+        }
+
+        /* قائمة السور */
+        .surah-list {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            overflow: hidden;
+            border: 1px solid var(--border);
+            margin-top: 15px;
+        }
+
+        .surah-item {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .surah-item:last-child {
+            border-bottom: none;
+        }
+
+        .surah-item:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .surah-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .surah-number {
+            background: var(--primary);
+            color: white;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-left: 15px;
-            color: #4A00E0;
-            font-size: 1.2rem;
+            font-weight: 700;
+            font-size: 14px;
+            flex-shrink: 0;
         }
-        
-        .exercise-details {
+
+        .surah-details {
             flex: 1;
         }
-        
-        .exercise-details h4 {
-            color: #333;
-            margin-bottom: 5px;
+
+        .surah-name {
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 3px;
         }
-        
-        .exercise-details p {
-            color: #666;
-            font-size: 0.9rem;
+
+        .surah-meta {
+            font-size: 13px;
+            color: var(--text-dim);
+            display: flex;
+            gap: 10px;
         }
-        
-        .exercise-duration {
-            color: #4A00E0;
-            font-weight: bold;
+
+        .play-surah {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+            transition: var(--transition);
+            flex-shrink: 0;
         }
-        
+
+        .play-surah:hover {
+            background: var(--primary-dark);
+            transform: scale(1.05);
+        }
+
+        /* شاشة الإعدادات */
+        .settings-container {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 20px;
+            border: 1px solid var(--border);
+            margin-top: 20px;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .setting-item:last-child {
+            border-bottom: none;
+        }
+
+        .setting-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .setting-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(13, 138, 240, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 18px;
+        }
+
+        .setting-text h3 {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 3px;
+        }
+
+        .setting-text p {
+            font-size: 13px;
+            color: var(--text-dim);
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 54px;
+            height: 28px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--text-dim);
+            transition: var(--transition);
+            border-radius: 34px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: var(--transition);
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        /* رسالة عدم توفر بيانات */
+        .no-data {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-dim);
+        }
+
+        .no-data i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: var(--primary);
+            opacity: 0.5;
+        }
+
+        /* تصميم متجاوب */
         @media (max-width: 480px) {
-            .container {
-                border-radius: 15px;
+            .grid-container {
+                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+                gap: 12px;
             }
             
-            header h1 {
-                font-size: 1.5rem;
+            .content-area {
+                padding: 12px;
             }
             
-            .exercise-figure {
-                width: 180px;
-                height: 180px;
+            header {
+                padding: 15px 12px 8px;
             }
             
-            .btn {
-                padding: 10px 20px;
-                font-size: 0.9rem;
+            #pageTitle {
+                font-size: 1.4rem;
             }
         }
-        
-        /* أنماط الحركة للتمارين */
-        @keyframes pushUp {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+
+        @media (max-width: 350px) {
+            .grid-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
-        
-        @keyframes squat {
-            0%, 100% { transform: translateY(0) scaleY(1); }
-            50% { transform: translateY(10px) scaleY(0.9); }
+
+        /* فلاتر البحث */
+        .search-filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            overflow-x: auto;
+            padding-bottom: 5px;
         }
-        
-        @keyframes plank {
-            0%, 100% { transform: rotate(0); }
-            25% { transform: rotate(2deg); }
-            75% { transform: rotate(-2deg); }
+
+        .filter-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 8px 15px;
+            font-size: 13px;
+            color: var(--text-dim);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: var(--transition);
         }
-        
-        @keyframes lunge {
-            0%, 100% { transform: translateX(0); }
-            50% { transform: translateX(-5px); }
-        }
-        
-        @keyframes crunch {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+
+        .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <header>
-            <h1><i class="fas fa-dumbbell"></i> برنامج تمارين منزلية</h1>
-            <p>مجسم تفاعلي يشرح التمارين خطوة بخطوة</p>
-        </header>
-        
-        <div class="exercise-view">
-            <div class="exercise-figure" id="exerciseFigure">
-                <!-- المجسم التفاعلي -->
-                <div class="figure-part head"></div>
-                <div class="figure-part body"></div>
-                <div class="figure-part arm-left"></div>
-                <div class="figure-part arm-right"></div>
-                <div class="figure-part leg-left"></div>
-                <div class="figure-part leg-right"></div>
-            </div>
-            
-            <div class="exercise-info">
-                <h2 id="exerciseTitle">تمرين الضغط</h2>
-                <p id="exerciseDescription">تمرين لتقوية عضلات الصدر والذراعين والكتفين. استلقي على بطنك ثم ادفع جسمك للأعلى باستخدام ذراعيك.</p>
-                
-                <div class="exercise-stats">
-                    <div class="stat">
-                        <div class="stat-value" id="exerciseReps">10</div>
-                        <div class="stat-label">عدد المرات</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-value" id="exerciseSets">3</div>
-                        <div class="stat-label">المجموعات</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-value" id="exerciseRest">30</div>
-                        <div class="stat-label">ثانية راحة</div>
-                    </div>
-                </div>
-                
-                <div class="timer" id="timer">00:30</div>
-            </div>
-            
-            <div class="controls">
-                <button class="btn btn-start" id="startBtn">
-                    <i class="fas fa-play"></i> ابدأ
-                </button>
-                <button class="btn btn-pause" id="pauseBtn">
-                    <i class="fas fa-pause"></i> إيقاف
-                </button>
-                <button class="btn btn-next" id="nextBtn">
-                    <i class="fas fa-forward"></i> التالي
-                </button>
-            </div>
-        </div>
-        
-        <div class="exercises-list">
-            <h3><i class="fas fa-list"></i> قائمة التمارين</h3>
-            
-            <div class="exercise-item active" data-exercise="0">
-                <div class="exercise-icon">
-                    <i class="fas fa-user"></i>
-                </div>
-                <div class="exercise-details">
-                    <h4>تمرين الضغط</h4>
-                    <p>تقوية الصدر والذراعين</p>
-                </div>
-                <div class="exercise-duration">30 ثانية</div>
-            </div>
-            
-            <div class="exercise-item" data-exercise="1">
-                <div class="exercise-icon">
-                    <i class="fas fa-running"></i>
-                </div>
-                <div class="exercise-details">
-                    <h4>تمرين القرفصاء</h4>
-                    <p>تقوية الأرداف والأرجل</p>
-                </div>
-                <div class="exercise-duration">45 ثانية</div>
-            </div>
-            
-            <div class="exercise-item" data-exercise="2">
-                <div class="exercise-icon">
-                    <i class="fas fa-bed"></i>
-                </div>
-                <div class="exercise-details">
-                    <h4>تمرين البلانك</h4>
-                    <p>تقوية عضلات البطن والظهر</p>
-                </div>
-                <div class="exercise-duration">60 ثانية</div>
-            </div>
-            
-            <div class="exercise-item" data-exercise="3">
-                <div class="exercise-icon">
-                    <i class="fas fa-shoe-prints"></i>
-                </div>
-                <div class="exercise-details">
-                    <h4>تمرين الطعنات</h4>
-                    <p>تقوية الفخذين والأرداف</p>
-                </div>
-                <div class="exercise-duration">40 ثانية</div>
-            </div>
-            
-            <div class="exercise-item" data-exercise="4">
-                <div class="exercise-icon">
-                    <i class="fas fa-undo"></i>
-                </div>
-                <div class="exercise-details">
-                    <h4>تمرين الكرانش</h4>
-                    <p>تقوية عضلات البطن</p>
-                </div>
-                <div class="exercise-duration">35 ثانية</div>
-            </div>
+<body class="dark-mode">
+
+<div id="loader">
+    <div class="spinner"></div>
+    <span style="font-size: 18px; color: #fff;">جاري تجهيز التطبيق...</span>
+</div>
+
+<header>
+    <div class="header-top">
+        <h1 id="pageTitle">القرآن الكريم</h1>
+        <div class="header-icons">
+            <button class="icon-btn" id="themeToggle" title="تبديل الوضع">
+                <i class="fas fa-moon"></i>
+            </button>
+            <button class="icon-btn" id="settingsBtn" title="الإعدادات">
+                <i class="fas fa-cog"></i>
+            </button>
         </div>
     </div>
+    <div class="search-container">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" class="search-input" id="mainSearch" placeholder="ابحث عن قارئ أو سورة...">
+    </div>
+</header>
 
-    <script>
-        // بيانات التمارين
-        const exercises = [
-            {
-                title: "تمرين الضغط",
-                description: "تمرين لتقوية عضلات الصدر والذراعين والكتفين. استلقي على بطنك ثم ادفع جسمك للأعلى باستخدام ذراعيك. حافظ على استقامة جسمك أثناء التمرين.",
-                reps: 10,
-                sets: 3,
-                rest: 30,
-                duration: 30,
-                animation: "pushUp",
-                icon: "fas fa-user"
-            },
-            {
-                title: "تمرين القرفصاء",
-                description: "تمرين لتقوية عضلات الأرداف والفخذين. قف مع تباعد قدميك بعرض الكتفين، ثم انزل بجسمك كما لو أنك تجلس على كرسي وارفع جسمك مرة أخرى.",
-                reps: 15,
-                sets: 3,
-                rest: 30,
-                duration: 45,
-                animation: "squat",
-                icon: "fas fa-running"
-            },
-            {
-                title: "تمرين البلانك",
-                description: "تمرين لتقوية عضلات البطن والظهر. استلقي على بطنك ثم ارتفع على أصابع قدميك وساعديك مع الحفاظ على استقامة جسمك. حافظ على هذه الوضعية.",
-                reps: 1,
-                sets: 3,
-                rest: 30,
-                duration: 60,
-                animation: "plank",
-                icon: "fas fa-bed"
-            },
-            {
-                title: "تمرين الطعنات",
-                description: "تمرين لتقوية عضلات الفخذين والأرداف. قف مستقيمًا، ثم تقدم بقدمك اليمنى للأمام وانزل بجسمك حتى تشكل ركبتك اليمنى زاوية 90 درجة. كرر مع القدم الأخرى.",
-                reps: 12,
-                sets: 3,
-                rest: 30,
-                duration: 40,
-                animation: "lunge",
-                icon: "fas fa-shoe-prints"
-            },
-            {
-                title: "تمرين الكرانش",
-                description: "تمرين لتقوية عضلات البطن. استلقي على ظهرك مع ثني ركبتيك ووضع يديك خلف رأسك. ارفع رأسك وكتفيك عن الأرض ثم عد إلى وضع البداية.",
-                reps: 20,
-                sets: 3,
-                rest: 30,
-                duration: 35,
-                animation: "crunch",
-                icon: "fas fa-undo"
-            }
-        ];
+<div class="content-area" id="mainView">
+    <!-- سيتم تعبئة المحتوى ديناميكيًا -->
+</div>
 
-        // عناصر DOM
-        const exerciseTitle = document.getElementById('exerciseTitle');
-        const exerciseDescription = document.getElementById('exerciseDescription');
-        const exerciseReps = document.getElementById('exerciseReps');
-        const exerciseSets = document.getElementById('exerciseSets');
-        const exerciseRest = document.getElementById('exerciseRest');
-        const timerElement = document.getElementById('timer');
-        const exerciseFigure = document.getElementById('exerciseFigure');
-        const startBtn = document.getElementById('startBtn');
-        const pauseBtn = document.getElementById('pauseBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const exerciseItems = document.querySelectorAll('.exercise-item');
+<!-- مشغل الصوت -->
+<div class="audio-player-fixed" id="playerBar">
+    <div class="player-info">
+        <div id="trackTitle">اسم السورة</div>
+        <div id="trackSub">اسم القارئ</div>
+    </div>
+    <div class="player-controls">
+        <button class="player-btn" id="playBtn" onclick="toggleAudio()">
+            <i class="fas fa-pause"></i>
+        </button>
+        <button class="close-player" onclick="closePlayer()">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    <audio id="mainAudio" controls></audio>
+</div>
 
-        // متغيرات التطبيق
-        let currentExercise = 0;
-        let timerInterval;
-        let isRunning = false;
-        let timeLeft = exercises[currentExercise].duration;
-        let currentTime = timeLeft;
+<!-- شريط التنقل السفلي -->
+<nav class="bottom-nav">
+    <div class="nav-item active" onclick="loadReciters()" id="navReciters">
+        <i class="fas fa-users nav-icon"></i>
+        <span>القراء</span>
+    </div>
+    <div class="nav-item" onclick="loadRadios()" id="navRadios">
+        <i class="fas fa-radio nav-icon"></i>
+        <span>راديو</span>
+    </div>
+    <div class="nav-item" onclick="loadBookmarks()" id="navBookmarks">
+        <i class="fas fa-bookmark nav-icon"></i>
+        <span>المفضلة</span>
+    </div>
+    <div class="nav-item" onclick="loadRecent()" id="navRecent">
+        <i class="fas fa-history nav-icon"></i>
+        <span>المستمع إليه</span>
+    </div>
+</nav>
 
-        // تهيئة التطبيق
-        function initApp() {
-            updateExerciseInfo();
-            updateTimerDisplay();
-            setActiveExerciseItem();
-            updateExerciseAnimation();
+<script>
+    const API_URL = "https://mp3quran.net/api/v3";
+    const mainView = document.getElementById('mainView');
+    const audio = document.getElementById('mainAudio');
+    const playerBar = document.getElementById('playerBar');
+    const themeToggle = document.getElementById('themeToggle');
+    const settingsBtn = document.getElementById('settingsBtn');
+    
+    let state = {
+        reciters: [],
+        surahs: [],
+        radios: [],
+        currentMode: 'reciters',
+        theme: 'dark',
+        bookmarks: [],
+        recent: []
+    };
+
+    // تهيئة التطبيق عند التحميل
+    window.onload = async () => {
+        // تحميل البيانات المحفوظة
+        loadStateFromStorage();
+        
+        // جلب السور
+        try {
+            const surahRes = await fetch(`${API_URL}/suwar`);
+            const surahData = await surahRes.json();
+            state.surahs = surahData.suwar;
+        } catch (error) {
+            console.error('خطأ في تحميل السور:', error);
         }
-
-        // تحديث معلومات التمرين
-        function updateExerciseInfo() {
-            const exercise = exercises[currentExercise];
-            exerciseTitle.textContent = exercise.title;
-            exerciseDescription.textContent = exercise.description;
-            exerciseReps.textContent = exercise.reps;
-            exerciseSets.textContent = exercise.sets;
-            exerciseRest.textContent = exercise.rest;
-            timeLeft = exercise.duration;
-            currentTime = timeLeft;
-            updateTimerDisplay();
-        }
-
-        // تحديث عرض المؤقت
-        function updateTimerDisplay() {
-            const minutes = Math.floor(currentTime / 60);
-            const seconds = currentTime % 60;
-            timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        }
-
-        // تعيين العنصر النشط في القائمة
-        function setActiveExerciseItem() {
-            exerciseItems.forEach((item, index) => {
-                if (index === currentExercise) {
-                    item.classList.add('active');
-                } else {
-                    item.classList.remove('active');
-                }
-            });
-        }
-
-        // تحديث حركة المجسم
-        function updateExerciseAnimation() {
-            const exercise = exercises[currentExercise];
-            
-            // إزالة جميع أنماط الحركة السابقة
-            exerciseFigure.style.animation = 'none';
-            
-            // إضافة نمط الحركة الجديد بعد تأخير بسيط
+        
+        // تحميل الواجهة الأولى
+        await loadReciters();
+        
+        // إخفاء شاشة التحميل
+        setTimeout(() => {
+            document.getElementById('loader').style.opacity = '0';
             setTimeout(() => {
-                exerciseFigure.style.animation = `${exercise.animation} 2s infinite ease-in-out`;
-            }, 50);
-        }
+                document.getElementById('loader').style.display = 'none';
+            }, 500);
+        }, 1000);
+    };
 
-        // بدء المؤقت
-        function startTimer() {
-            if (isRunning) return;
+    // حفظ حالة التطبيق
+    function saveStateToStorage() {
+        localStorage.setItem('quranAppState', JSON.stringify({
+            theme: state.theme,
+            bookmarks: state.bookmarks,
+            recent: state.recent
+        }));
+    }
+
+    // تحميل الحالة المحفوظة
+    function loadStateFromStorage() {
+        const saved = localStorage.getItem('quranAppState');
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            state.theme = parsed.theme || 'dark';
+            state.bookmarks = parsed.bookmarks || [];
+            state.recent = parsed.recent || [];
             
-            isRunning = true;
-            startBtn.disabled = true;
-            startBtn.innerHTML = '<i class="fas fa-play"></i> تعمل';
-            
-            timerInterval = setInterval(() => {
-                currentTime--;
-                updateTimerDisplay();
+            // تطبيق الثيم
+            document.body.className = `${state.theme}-mode`;
+            updateThemeIcon();
+        }
+    }
+
+    // تبديل الوضع الداكن/فاتح
+    themeToggle.addEventListener('click', () => {
+        if (state.theme === 'dark') {
+            state.theme = 'light';
+            document.body.className = 'light-mode';
+        } else {
+            state.theme = 'dark';
+            document.body.className = 'dark-mode';
+        }
+        updateThemeIcon();
+        saveStateToStorage();
+    });
+
+    function updateThemeIcon() {
+        const icon = themeToggle.querySelector('i');
+        if (state.theme === 'dark') {
+            icon.className = 'fas fa-moon';
+        } else {
+            icon.className = 'fas fa-sun';
+        }
+    }
+
+    // فتح إعدادات التطبيق
+    settingsBtn.addEventListener('click', () => {
+        state.currentMode = 'settings';
+        setActiveNav(-1);
+        renderSettings();
+    });
+
+    function renderSettings() {
+        mainView.innerHTML = `
+            <h2 class="section-title"><i class="fas fa-cog"></i> إعدادات التطبيق</h2>
+            <div class="settings-container">
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-icon">
+                            <i class="fas fa-moon"></i>
+                        </div>
+                        <div class="setting-text">
+                            <h3>الوضع الليلي</h3>
+                            <p>تفعيل الوضع الداكن للراحة البصرية</p>
+                        </div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="themeSwitch" ${state.theme === 'dark' ? 'checked' : ''}>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
                 
-                if (currentTime <= 0) {
-                    clearInterval(timerInterval);
-                    isRunning = false;
-                    startBtn.disabled = false;
-                    startBtn.innerHTML = '<i class="fas fa-play"></i> ابدأ';
-                    playCompletionSound();
-                }
-            }, 1000);
-        }
-
-        // إيقاف المؤقت
-        function pauseTimer() {
-            if (!isRunning) return;
-            
-            clearInterval(timerInterval);
-            isRunning = false;
-            startBtn.disabled = false;
-            startBtn.innerHTML = '<i class="fas fa-play"></i> استمر';
-        }
-
-        // الانتقال إلى التمرين التالي
-        function nextExercise() {
-            pauseTimer();
-            
-            currentExercise++;
-            if (currentExercise >= exercises.length) {
-                currentExercise = 0;
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-icon">
+                            <i class="fas fa-volume-up"></i>
+                        </div>
+                        <div class="setting-text">
+                            <h3>جودة الصوت</h3>
+                            <p>اختر جودة الصوت المناسبة لاتصالك</p>
+                        </div>
+                    </div>
+                    <select id="qualitySelect" style="padding: 8px 12px; border-radius: 8px; background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border);">
+                        <option value="high">عالية</option>
+                        <option value="medium">متوسطة</option>
+                        <option value="low">منخفضة</option>
+                    </select>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-icon">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                        <div class="setting-text">
+                            <h3>التنبيهات</h3>
+                            <p>تفعيل الإشعارات والتذكيرات</p>
+                        </div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="notificationsSwitch" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-icon">
+                            <i class="fas fa-download"></i>
+                        </div>
+                        <div class="setting-text">
+                            <h3>التخزين المؤقت</h3>
+                            <p>تخزين الملفات الصوتية مؤقتاً لتوفير البيانات</p>
+                        </div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="cacheSwitch" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-icon">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <div class="setting-text">
+                            <h3>حول التطبيق</h3>
+                            <p>إصدار 1.0 - تطبيق القرآن الكريم الشامل</p>
+                        </div>
+                    </div>
+                    <button class="icon-btn" style="font-size: 18px;">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        // إضافة المستمعين للأحداث
+        document.getElementById('themeSwitch').addEventListener('change', function() {
+            if (this.checked) {
+                state.theme = 'dark';
+                document.body.className = 'dark-mode';
+            } else {
+                state.theme = 'light';
+                document.body.className = 'light-mode';
             }
-            
-            updateExerciseInfo();
-            setActiveExerciseItem();
-            updateExerciseAnimation();
-        }
+            updateThemeIcon();
+            saveStateToStorage();
+        });
+        
+        document.getElementById('qualitySelect').addEventListener('change', function() {
+            // حفظ جودة الصوت المختارة
+            localStorage.setItem('audioQuality', this.value);
+        });
+        
+        // تعيين الجودة المحفوظة إن وجدت
+        const savedQuality = localStorage.getItem('audioQuality') || 'high';
+        document.getElementById('qualitySelect').value = savedQuality;
+    }
 
-        // تشغيل صوت إكمال التمرين
-        function playCompletionSound() {
-            // في تطبيق حقيقي، يمكن إضافة صوت هنا
-            console.log("اكتمل التمرين!");
+    // جلب القراء
+    async function loadReciters() {
+        state.currentMode = 'reciters';
+        setActiveNav(0);
+        mainView.innerHTML = '<p style="text-align: center; padding: 20px;">جاري تحميل قائمة القراء...</p>';
+        
+        try {
+            const res = await fetch(`${API_URL}/reciters?language=ar`);
+            const data = await res.json();
+            state.reciters = data.reciters || [];
+            renderReciters(state.reciters);
+        } catch (error) {
+            console.error('خطأ في تحميل القراء:', error);
+            mainView.innerHTML = `
+                <div class="no-data">
+                    <i class="fas fa-wifi-slash"></i>
+                    <p>تعذر تحميل قائمة القراء. يرجى التحقق من اتصال الإنترنت والمحاولة مرة أخرى.</p>
+                    <button onclick="loadReciters()" style="margin-top: 15px; padding: 10px 20px; background: var(--primary); color: white; border: none; border-radius: 10px; cursor: pointer;">إعادة المحاولة</button>
+                </div>
+            `;
         }
+    }
 
-        // أحداث النقر على عناصر القائمة
-        exerciseItems.forEach((item, index) => {
-            item.addEventListener('click', () => {
-                pauseTimer();
-                currentExercise = index;
-                updateExerciseInfo();
-                setActiveExerciseItem();
-                updateExerciseAnimation();
+    function renderReciters(list) {
+        if (list.length === 0) {
+            mainView.innerHTML = '<div class="no-data"><i class="fas fa-users"></i><p>لا توجد نتائج</p></div>';
+            return;
+        }
+        
+        let html = `
+            <h2 class="section-title"><i class="fas fa-users"></i> القراء</h2>
+            <div class="search-filters">
+                <button class="filter-btn active" onclick="filterReciters('all')">الكل</button>
+                <button class="filter-btn" onclick="filterReciters('popular')">الأكثر شهرة</button>
+                <button class="filter-btn" onclick="filterReciters('riwayah')">الروايات</button>
+            </div>
+            <div class="grid-container">
+        `;
+        
+        list.forEach(r => {
+            const moshafName = r.moshaf && r.moshaf[0] ? r.moshaf[0].name : 'غير محدد';
+            html += `
+                <div class="item-card" onclick="openReciter('${r.id}')">
+                    <div class="item-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="item-name">${r.name}</div>
+                    <div class="item-sub">${moshafName}</div>
+                </div>
+            `;
+        });
+        
+        html += '</div>';
+        mainView.innerHTML = html;
+        
+        // إضافة مستمعين لأزرار الفلترة
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
             });
         });
+    }
 
-        // أحداث الأزرار
-        startBtn.addEventListener('click', startTimer);
-        pauseBtn.addEventListener('click', pauseTimer);
-        nextBtn.addEventListener('click', nextExercise);
+    function filterReciters(type) {
+        if (!state.reciters || state.reciters.length === 0) return;
+        
+        let filtered = [...state.reciters];
+        
+        if (type === 'popular') {
+            filtered = filtered.slice(0, 20); // أول 20 كأكثر شهرة
+        } else if (type === 'riwayah') {
+            filtered = filtered.filter(r => 
+                r.name.includes('حفص') || 
+                r.name.includes('ورش') || 
+                r.name.includes('الدوري')
+            );
+        }
+        
+        renderReciters(filtered);
+    }
 
-        // تهيئة التطبيق عند التحميل
-        document.addEventListener('DOMContentLoaded', initApp);
-    </script>
+    // فتح سور القارئ
+    function openReciter(id) {
+        const reciter = state.reciters.find(r => r.id == id);
+        if (!reciter) return;
+        
+        const moshaf = reciter.moshaf && reciter.moshaf[0] ? reciter.moshaf[0] : null;
+        if (!moshaf) {
+            mainView.innerHTML = '<div class="no-data"><i class="fas fa-exclamation-circle"></i><p>لا توجد تسجيلات لهذا القارئ</p></div>';
+            return;
+        }
+        
+        const sList = moshaf.surah_list ? moshaf.surah_list.split(',') : [];
+        
+        let html = `
+            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                <button class="icon-btn" onclick="loadReciters()" style="font-size: 18px;">
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+                <h2 class="section-title" style="margin: 0;">${reciter.name}</h2>
+            </div>
+            <p style="color: var(--text-dim); margin-bottom: 20px; text-align: center;">${moshaf.name || ''}</p>
+            <div class="surah-list">
+        `;
+        
+        if (sList.length === 0) {
+            html += '<div class="no-data" style="padding: 30px;"><i class="fas fa-music"></i><p>لا توجد سور مسجلة</p></div>';
+        } else {
+            sList.forEach(sId => {
+                const surah = state.surahs.find(s => s.id == sId);
+                if (!surah) return;
+                
+                const audioUrl = `${moshaf.server}${sId.padStart(3, '0')}.mp3`;
+                const surahName = surah.name || `سورة ${surah.id}`;
+                
+                html += `
+                    <div class="surah-item">
+                        <div class="surah-info">
+                            <div class="surah-number">${surah.id}</div>
+                            <div class="surah-details">
+                                <div class="surah-name">${surahName}</div>
+                                <div class="surah-meta">
+                                    <span>${surah.verses_count || '?'} آية</span>
+                                    <span>${surah.revelation_place === 'makkah' ? 'مكية' : 'مدنية'}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="play-surah" onclick="play('${audioUrl}', '${surahName}', '${reciter.name}', ${surah.id}, '${reciter.id}')">
+                            <i class="fas fa-play"></i>
+                        </button>
+                    </div>
+                `;
+            });
+        }
+        
+        html += '</div>';
+        mainView.innerHTML = html;
+    }
+
+    // الإذاعات
+    async function loadRadios() {
+        state.currentMode = 'radios';
+        setActiveNav(1);
+        
+        try {
+            const res = await fetch(`${API_URL}/radios?language=ar`);
+            const data = await res.json();
+            state.radios = data.radios || [];
+            renderRadios();
+        } catch (error) {
+            console.error('خطأ في تحميل الإذاعات:', error);
+            state.radios = [
+                {id: 1, name: 'إذاعة القرآن الكريم من مصر', url: 'https://qurango.net/radio/tarateel'},
+                {id: 2, name: 'إذاعة القرآن الكريم من السعودية', url: 'https://qurango.net/radio/saudiarabia'},
+                {id: 3, name: 'إذاعة القرآن الكريم من الأردن', url: 'https://qurango.net/radio/jordan'}
+            ];
+            renderRadios();
+        }
+    }
+
+    function renderRadios() {
+        let html = `
+            <h2 class="section-title"><i class="fas fa-radio"></i> الإذاعات القرآنية</h2>
+            <p style="color: var(--text-dim); margin-bottom: 20px; text-align: center;">بث مباشر من أشهر الإذاعات القرآنية</p>
+            <div class="grid-container">
+        `;
+        
+        if (state.radios.length === 0) {
+            html = `
+                <div class="no-data">
+                    <i class="fas fa-radio"></i>
+                    <p>لا توجد إذاعات متاحة حالياً</p>
+                </div>
+            `;
+            mainView.innerHTML = html;
+            return;
+        }
+        
+        state.radios.forEach(r => {
+            html += `
+                <div class="item-card" onclick="playRadio('${r.url}', '${r.name}')">
+                    <div class="item-icon">
+                        <i class="fas fa-broadcast-tower"></i>
+                    </div>
+                    <div class="item-name">${r.name}</div>
+                    <div class="item-sub">بث مباشر</div>
+                </div>
+            `;
+        });
+        
+        html += '</div>';
+        mainView.innerHTML = html;
+    }
+
+    function playRadio(url, name) {
+        play(url, name, 'بث إذاعي مباشر');
+    }
+
+    // المفضلة
+    function loadBookmarks() {
+        state.currentMode = 'bookmarks';
+        setActiveNav(2);
+        
+        if (state.bookmarks.length === 0) {
+            mainView.innerHTML = `
+                <div class="no-data">
+                    <i class="fas fa-bookmark"></i>
+                    <p>لا توجد عناصر في المفضلة</p>
+                    <p style="font-size: 13px; margin-top: 10px;">يمكنك إضافة السور إلى المفضلة أثناء الاستماع</p>
+                </div>
+            `;
+            return;
+        }
+        
+        let html = `
+            <h2 class="section-title"><i class="fas fa-bookmark"></i> السور المفضلة</h2>
+            <div class="surah-list">
+        `;
+        
+        state.bookmarks.forEach((item, index) => {
+            html += `
+                <div class="surah-item">
+                    <div class="surah-info">
+                        <div class="surah-number">${item.surahId}</div>
+                        <div class="surah-details">
+                            <div class="surah-name">${item.title}</div>
+                            <div class="surah-meta">
+                                <span>${item.sub}</span>
+                                <span>${new Date(item.date).toLocaleDateString('ar-EG')}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="play-surah" onclick="play('${item.url}', '${item.title}', '${item.sub}')">
+                            <i class="fas fa-play"></i>
+                        </button>
+                        <button class="play-surah" style="background: #ef4444;" onclick="removeBookmark(${index})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        });
+        
+        html += '</div>';
+        mainView.innerHTML = html;
+    }
+
+    function addBookmark(url, title, sub, surahId, reciterId) {
+        const bookmark = {
+            url, title, sub, surahId, reciterId,
+            date: new Date().toISOString()
+        };
+        
+        // تجنب التكرار
+        const exists = state.bookmarks.find(b => 
+            b.surahId === surahId && b.reciterId === reciterId
+        );
+        
+        if (!exists) {
+            state.bookmarks.unshift(bookmark);
+            // حفظ فقط آخر 50 عنصر
+            if (state.bookmarks.length > 50) {
+                state.bookmarks.pop();
+            }
+            saveStateToStorage();
+        }
+    }
+
+    function removeBookmark(index) {
+        state.bookmarks.splice(index, 1);
+        saveStateToStorage();
+        loadBookmarks();
+    }
+
+    // السور المستمع إليها مؤخراً
+    function loadRecent() {
+        state.currentMode = 'recent';
+        setActiveNav(3);
+        
+        if (state.recent.length === 0) {
+            mainView.innerHTML = `
+                <div class="no-data">
+                    <i class="fas fa-history"></i>
+                    <p>لا توجد سور مستمع إليها مؤخراً</p>
+                    <p style="font-size: 13px; margin-top: 10px;">سيظهر هنا السور التي تستمع إليها</p>
+                </div>
+            `;
+            return;
+        }
+        
+        let html = `
+            <h2 class="section-title"><i class="fas fa-history"></i> السور المستمع إليها</h2>
+            <div class="surah-list">
+        `;
+        
+        state.recent.forEach((item, index) => {
+            html += `
+                <div class="surah-item">
+                    <div class="surah-info">
+                        <div class="surah-number">${item.surahId}</div>
+                        <div class="surah-details">
+                            <div class="surah-name">${item.title}</div>
+                            <div class="surah-meta">
+                                <span>${item.sub}</span>
+                                <span>${new Date(item.date).toLocaleDateString('ar-EG')}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="play-surah" onclick="play('${item.url}', '${item.title}', '${item.sub}')">
+                            <i class="fas fa-play"></i>
+                        </button>
+                        <button class="play-surah" onclick="addBookmark('${item.url}', '${item.title}', '${item.sub}', ${item.surahId}, '${item.reciterId}')">
+                            <i class="fas fa-bookmark"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        });
+        
+        html += '</div>';
+        mainView.innerHTML = html;
+    }
+
+    function addToRecent(url, title, sub, surahId, reciterId) {
+        const recentItem = {
+            url, title, sub, surahId, reciterId,
+            date: new Date().toISOString()
+        };
+        
+        // تجنب التكرار
+        const existsIndex = state.recent.findIndex(r => 
+            r.surahId === surahId && r.reciterId === reciterId
+        );
+        
+        if (existsIndex !== -1) {
+            state.recent.splice(existsIndex, 1);
+        }
+        
+        state.recent.unshift(recentItem);
+        // حفظ فقط آخر 30 عنصر
+        if (state.recent.length > 30) {
+            state.recent.pop();
+        }
+        saveStateToStorage();
+    }
+
+    // نظام البحث
+    document.getElementById('mainSearch').addEventListener('input', function(e) {
+        handleSearch(e.target.value);
+    });
+
+    function handleSearch(val) {
+        if (val.trim() === '') {
+            if (state.currentMode === 'reciters') {
+                renderReciters(state.reciters);
+            }
+            return;
+        }
+        
+        if (state.currentMode === 'reciters') {
+            const filtered = state.reciters.filter(r => 
+                r.name.includes(val) || 
+                (r.moshaf && r.moshaf[0] && r.moshaf[0].name.includes(val))
+            );
+            renderReciters(filtered);
+        }
+    }
+
+    // مشغل الصوت
+    function play(url, title, sub, surahId, reciterId) {
+        // إظهار مشغل الصوت
+        playerBar.classList.add('show');
+        document.getElementById('trackTitle').innerText = title;
+        document.getElementById('trackSub').innerText = sub;
+        
+        // إضافة إلى السجل
+        if (surahId && reciterId) {
+            addToRecent(url, title, sub, surahId, reciterId);
+        }
+        
+        // تشغيل الصوت
+        audio.src = url;
+        audio.play()
+            .then(() => {
+                document.getElementById('playBtn').innerHTML = '<i class="fas fa-pause"></i>';
+            })
+            .catch(error => {
+                console.error('خطأ في تشغيل الصوت:', error);
+                alert('تعذر تشغيل الملف الصوتي. يرجى التأكد من اتصال الإنترنت.');
+            });
+    }
+
+    function toggleAudio() {
+        const playBtn = document.getElementById('playBtn');
+        if (audio.paused) {
+            audio.play();
+            playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+        } else {
+            audio.pause();
+            playBtn.innerHTML = '<i class="fas fa-play"></i>';
+        }
+    }
+
+    function closePlayer() {
+        playerBar.classList.remove('show');
+        audio.pause();
+    }
+
+    // تحديث زر التشغيل عند انتهاء الصوت
+    audio.addEventListener('ended', () => {
+        document.getElementById('playBtn').innerHTML = '<i class="fas fa-play"></i>';
+    });
+
+    // التعامل مع أخطاء الصوت
+    audio.addEventListener('error', () => {
+        alert('حدث خطأ في تحميل الملف الصوتي. يرجى المحاولة مرة أخرى.');
+        document.getElementById('playBtn').innerHTML = '<i class="fas fa-play"></i>';
+    });
+
+    // تفعيل أزرار التنقل
+    function setActiveNav(idx) {
+        document.querySelectorAll('.nav-item').forEach((el, i) => {
+            el.classList.toggle('active', i === idx);
+        });
+    }
+</script>
+
 </body>
 </html>
